@@ -1,3 +1,6 @@
-medm -x -macro "P=13PCO1:, R=cam1:" ADPco.adl &
+#!/bin/bash
+
+export LD_LIBRARY_PATH=/opt/pco/pco.sdk/lib
+
 ../../bin/linux-x86_64/pcoApp st.cmd
 

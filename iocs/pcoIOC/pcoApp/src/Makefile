@@ -14,8 +14,11 @@ $(PROD_NAME)_DBD += ADPcoSupport.dbd
 # <name>_registerRecordDeviceDriver.cpp will be created from <name>.dbd
 $(PROD_NAME)_SRCS += $(PROD_NAME)_registerRecordDeviceDriver.cpp $(PROD_NAME)Main.cpp
 
+USR_LDFLAGS_Linux += -L$(PCO_LIB)
+
 # Add locally compiled object code
 PROD_LIBS += ADPco
+PROD_SYS_LIBS += pco_sc2cam
 
 include $(ADCORE)/ADApp/commonDriverMakefile
 
