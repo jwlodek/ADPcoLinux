@@ -202,6 +202,7 @@ void ADPco::acquisitionTask()
     int adStatus;
     int acquire;
     int arrayCallbacks;
+    int minX, minY, binX, binY;
     int imageMode, imageCounter;
     int numImages, numImagesCounter;
     int framesDropped;
@@ -246,6 +247,10 @@ void ADPco::acquisitionTask()
 
             dims[0] = arraySizeX_;
             dims[1] = arraySizeY_;
+            getIntegerParam(ADMinX, &minX);
+            getIntegerParam(ADMinY, &minY);
+            getIntegerParam(ADBinX, &binX);
+            getIntegerParam(ADBinY, &binY);
             getIntegerParam(ADAcquire, &acquire);
             setIntegerParam(ADNumImagesCounter, 0);
             setIntegerParam(ADStatus, ADStatusAcquire);
@@ -288,6 +293,10 @@ void ADPco::acquisitionTask()
                 errorCode = PCO_GetBuffer(cameraHandle_, bufNum, &pData, &eventHandle);
                 if (errorCode == PCO_NOERROR) {
                     pImage = this->pNDArrayPool->alloc(2, dims, NDUInt16, 0, NULL);
+                    pImage->dims[0].offset = minX;
+                    pImage->dims[0].binning = binX;
+                    pImage->dims[1].offset = minY;
+                    pImage->dims[1].binning = binY;
                     memcpy(pImage->pData, pData, arraySizeX_ * arraySizeY_ * sizeof(WORD));
                     numImagesCounter++;
                     imageCounter++;
