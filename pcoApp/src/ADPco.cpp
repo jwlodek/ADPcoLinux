@@ -497,10 +497,11 @@ asynStatus ADPco::startAcquisition()
         pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_42 &&
         pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_GL &&
         pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_HS &&
-        pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_MT) {
+        pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_MT &&
+        pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_USB3) {
         errorCode = PCO_SetRecordingState(cameraHandle_, 1);
         CHECK_ERROR(errorCode, "PCO_SetRecordingState");
-        if (status) return (asynStatus)status;        
+        if (status) return (asynStatus)status;
     }
 
     for (size_t i=0; i<10; i++) {
