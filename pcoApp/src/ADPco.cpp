@@ -492,13 +492,16 @@ asynStatus ADPco::startAcquisition()
         pcoBufList_[i].sBufNr = pcoBuffer_[i].sBufNum;
     }
 
+    printf("%d", pcoGeneral_)
+
     /* For non-edge cameras, switch on recording state before buffers given */
-    if (pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE &&
+    if (pcoGeneral_.strCamType.wCamType == CAMERATYPE_PCO_EDGE_USB3 || 
+        (pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE &&
         pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_42 &&
         pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_GL &&
         pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_HS &&
         pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_MT &&
-        pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_USB3) {
+        )) {
         errorCode = PCO_SetRecordingState(cameraHandle_, 1);
         CHECK_ERROR(errorCode, "PCO_SetRecordingState");
         if (status) return (asynStatus)status;
@@ -511,11 +514,12 @@ asynStatus ADPco::startAcquisition()
     }
 
     /* For edge cameras, switch on recording state after buffers given */
-    if (pcoGeneral_.strCamType.wCamType == CAMERATYPE_PCO_EDGE ||
+    if (pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_USB3 &&
+        (pcoGeneral_.strCamType.wCamType == CAMERATYPE_PCO_EDGE ||
         pcoGeneral_.strCamType.wCamType == CAMERATYPE_PCO_EDGE_42 ||
         pcoGeneral_.strCamType.wCamType == CAMERATYPE_PCO_EDGE_GL ||
         pcoGeneral_.strCamType.wCamType == CAMERATYPE_PCO_EDGE_HS ||
-        pcoGeneral_.strCamType.wCamType == CAMERATYPE_PCO_EDGE_MT) {
+        pcoGeneral_.strCamType.wCamType == CAMERATYPE_PCO_EDGE_MT)) {
         errorCode = PCO_SetRecordingState(cameraHandle_, 1);
         CHECK_ERROR(errorCode, "PCO_SetRecordingState");
         if (status) return (asynStatus)status;
