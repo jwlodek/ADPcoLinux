@@ -171,6 +171,7 @@ ADPco::ADPco(const char *portName, const char *cameraId, size_t maxMemory, int p
 
     // shutdown on exit
     epicsAtExit(c_shutdown, this);
+    this->armCamera();
 
     return;
 }
@@ -301,7 +302,7 @@ void ADPco::acquisitionTask()
                     numImagesCounter++;
                     imageCounter++;
                 }
-                errorCode = PCO_AddBufferEx(cameraHandle_, 0, 0, bufNum,  arraySizeX_, arraySizeY_, sizeof(WORD));
+                errorCode = PCO_AddBufferEx(cameraHandle_, 0, 0, bufNum,  arraySizeX_, arraySizeY_, sizeof(WORD) * 8);
                 CHECK_ERROR(errorCode, "PCO_AddBufferEx");
             }
         } else if ((errorCode & PCO_ERROR_TIMEOUT) != PCO_ERROR_TIMEOUT &&
@@ -492,23 +493,22 @@ asynStatus ADPco::startAcquisition()
         pcoBufList_[i].sBufNr = pcoBuffer_[i].sBufNum;
     }
 
-    printf("%d", pcoGeneral_)
-
     /* For non-edge cameras, switch on recording state before buffers given */
     if (pcoGeneral_.strCamType.wCamType == CAMERATYPE_PCO_EDGE_USB3 || 
         (pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE &&
         pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_42 &&
         pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_GL &&
         pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_HS &&
-        pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_MT &&
+        pcoGeneral_.strCamType.wCamType != CAMERATYPE_PCO_EDGE_MT
         )) {
+        
         errorCode = PCO_SetRecordingState(cameraHandle_, 1);
         CHECK_ERROR(errorCode, "PCO_SetRecordingState");
         if (status) return (asynStatus)status;
     }
 
     for (size_t i=0; i<10; i++) {
-        errorCode = PCO_AddBufferEx(cameraHandle_, 0, 0, pcoBuffer_[i].sBufNum, arraySizeX_, arraySizeY_, sizeof(WORD));
+        errorCode = PCO_AddBufferEx(cameraHandle_, 0, 0, pcoBuffer_[i].sBufNum, arraySizeX_, arraySizeY_, sizeof(WORD) * 8);
         CHECK_ERROR(errorCode, "PCO_AddBufferEx");
         if (status) return (asynStatus)status;
     }
